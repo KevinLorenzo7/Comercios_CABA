@@ -17,7 +17,7 @@ def find_nearest(point, candidates):
     return candidates.iloc[index]
 
 # Shops data filtered
-ruta_shapefile = 'C:/Users/keezl/Desktop/Comercios_CABA/Usos_del_Suelo_CABA.zip'
+ruta_shapefile = 'C:/Users/keezl/Desktop/Banks/Usos_del_Suelo_CABA.zip'
 gdf = gpd.read_file(ruta_shapefile)
 gdf = gdf.to_crs("EPSG:4326")
 gdf_filtered = gdf[
@@ -31,7 +31,7 @@ gdf_filtered = gdf[
 #gdf_filtered = gdf_filtered.head(500)  # Limit to 500 for this example
 
 # Banks data
-df_bancos = pd.read_excel('C:/Users/keezl/Desktop/Comercios_CABA/bancos.xlsx')
+df_bancos = pd.read_excel('C:/Users/keezl/Desktop/Banks/Banks.xlsx')
 df_ciudad = df_bancos[df_bancos['nombre'] == 'Banco Ciudad De Buenos Aires'].copy()
 df_ciudad['lat'] = pd.to_numeric(df_ciudad['lat'], errors='coerce')
 df_ciudad['long'] = pd.to_numeric(df_ciudad['long'], errors='coerce')
@@ -87,7 +87,7 @@ for _, row in gdf_filtered.iterrows():
         })
 
 # Banks group
-banco_group = folium.FeatureGroup(name="Sucursales Banco Ciudad")
+banc_group = folium.FeatureGroup(name="Sucursales Banco Ciudad")
 
 # Add banks to the map
 for _, row in gdf_ciudad.iterrows():
@@ -102,10 +102,10 @@ for _, row in gdf_ciudad.iterrows():
         popup=row['nombre'],
         tooltip=folium.Tooltip(tooltip_html, style="max-width: 300px;"),
         icon=folium.Icon(color='blue', icon='bank', prefix='fa')
-    ).add_to(banco_group)
+    ).add_to(banc_group)
 
 # Add banks group to the map
-banco_group.add_to(m)
+banc_group.add_to(m)
 
 # Fit maps vision
 m.fit_bounds(get_bounds(gdf_filtered))
@@ -114,12 +114,10 @@ m.fit_bounds(get_bounds(gdf_filtered))
 folium.LayerControl().add_to(m)
 
 # Save map
-m.save('C:/Users/keezl/Desktop/Comercios_CABA/FINAL.html')
-
-print("Mapa guardado como FINAL.html")
+m.save('C:/Users/keezl/Desktop/Banks/Map.html')
 
 # Create and save Excel
 df_excel = pd.DataFrame(excel_data)
-df_excel.to_excel('C:/Users/keezl/Desktop/Comercios_CABA/comercios_y_sucursales.xlsx', index=False)
+df_excel.to_excel('C:/Users/keezl/Desktop/Banks/businesses_and_bank_branches.xlsx', index=False)
 
-print("Archivo Excel guardado como comercios_y_sucursales.xlsx")
+print("Excel file save as businesses_and_bank_branches.xlsx")
